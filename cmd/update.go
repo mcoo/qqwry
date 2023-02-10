@@ -128,7 +128,7 @@ var updateCmd = &cobra.Command{
 		}
 		fmt.Printf("下载完成，保存为qqwry.tmp\n")
 		fmt.Printf("开始解压qqwry.dat\n")
-		cmd := exec.Command(innoExtractPath, "-d", "./tmp", "-I", "app\\qqwry.dat", "tmp/qqwry.tmp")
+		cmd := exec.Command(innoExtractPath, "-d", "./tmp", "-I", "qqwry.dat", "tmp/qqwry.tmp")
 		cmd.Stderr = os.Stderr
 		err = cmd.Run()
 		if err != nil {
