@@ -22,7 +22,7 @@ type Dat struct {
 	fs *os.File
 }
 
-var loc, _ = time.LoadLocation("Asia/Shanghai")
+var loc = time.FixedZone("CST", 3600*8)
 
 func New(fs *os.File) Dat {
 	return Dat{fs: fs}

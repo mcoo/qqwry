@@ -148,4 +148,4 @@ func init() {
 	updateCmd.Flags().StringVarP(&innoExtractPath, "iepath", "i", "innoextract", "innoExtract Path")
 }
 
-var loc, _ = time.LoadLocation("Asia/Shanghai")
+var loc = time.FixedZone("CST", 3600*8)
