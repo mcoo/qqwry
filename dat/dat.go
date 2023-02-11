@@ -183,7 +183,7 @@ func (d Dat) readAddress(offset int64) (country, area string, e error) {
 		if err != nil {
 			return "", "", err
 		}
-		area, _, err = d.readString(curPointer)
+		area, err = d.readArea(curPointer)
 		if err != nil {
 			return "", "", err
 		}
