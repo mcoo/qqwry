@@ -19,13 +19,24 @@ import (
 )
 
 type Dat struct {
-	fs *os.File
+	fs     *os.File
+	data   []byte
+	memory bool
 }
 
 var loc = time.FixedZone("CST", 3600*8)
 
-func New(fs *os.File) Dat {
-	return Dat{fs: fs}
+func New(fs *os.File, memory bool, closeFileFunc func()) Dat {
+	var data []byte
+	if memory {
+		data, _ = io.ReadAll(fs)
+		fmt.Printf("加载到内存 大小:%d byte\n", len(data))
+		if closeFileFunc != nil {
+			closeFileFunc()
+		}
+	}
+
+	return Dat{fs: fs, data: data, memory: memory}
 }
 
 func (d Dat) SearchIp(ipv4 net.IP) (country, area string, e error) {
@@ -64,6 +75,13 @@ func (d Dat) Version() (*time.Time, error) {
 }
 func (d Dat) readByte(offset int64) (byte, error) {
 	var data byte
+	if d.memory {
+		if offset >= int64(len(d.data)) {
+			return 0, fmt.Errorf("offset out of data")
+		}
+		return d.data[offset], nil
+	}
+
 	err := d.readWithSize(offset, &data, 1, binary.LittleEndian)
 	if err != nil {
 		return 0, err
@@ -92,6 +110,27 @@ func (d Dat) readUint32WithLength(offset, len int64) (uint32, error) {
 }
 func (d Dat) readString(offset int64) (string, int64, error) {
 	var data string
+	if d.memory {
+		var newBuf bytes.Buffer
+		for {
+			if offset >= int64(len(d.data)) {
+				offset--
+				break
+			}
+			b := d.data[offset]
+			offset += 1
+			if b == 0 {
+				break
+			}
+			newBuf.WriteByte(b)
+		}
+		b, err := simplifiedchinese.GBK.NewDecoder().Bytes(newBuf.Bytes())
+		if err != nil {
+			return data, offset, err
+		}
+		data = string(b)
+		return data, offset, nil
+	}
 	r, err := d.fs.Seek(offset, 0)
 	if err != nil {
 		return data, r, err
@@ -113,10 +152,20 @@ func (d Dat) readString(offset int64) (string, int64, error) {
 func (d Dat) readWithSize(offset int64, data any, size int64, order binary.ByteOrder) error {
 	l := int64(reflect.TypeOf(data).Elem().Size())
 	tmp := make([]byte, size, l)
-	_, err := d.fs.ReadAt(tmp, offset)
-	if err != nil && err != io.EOF {
-		return err
+	if d.memory {
+		if offset+size >= int64(len(d.data)) {
+			return fmt.Errorf("offset out of data")
+		}
+		for i := offset; i < offset+size; i++ {
+			tmp[i-offset] = d.data[i]
+		}
+	} else {
+		_, err := d.fs.ReadAt(tmp, offset)
+		if err != nil && err != io.EOF {
+			return err
+		}
 	}
+
 	if data == nil {
 		return fmt.Errorf("data nil")
 	}

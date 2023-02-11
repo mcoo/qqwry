@@ -56,7 +56,7 @@ var updateCmd = &cobra.Command{
 		}
 		var nowVersion *time.Time
 		if !downloadNew {
-			d := dat.New(fs)
+			d := dat.New(fs, false, nil)
 			nowVersion, err = d.Version()
 			fs.Close()
 			if err != nil {
