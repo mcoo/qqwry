@@ -1,0 +1,8 @@
+.*
+!.github
+!.gitignore
+!.goreleaser.yml
+*.exe
+*.dat
+extract
+dist
