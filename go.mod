@@ -6,7 +6,7 @@ require (
 	github.com/imroc/req/v3 v3.32.0
 	github.com/spf13/cobra v1.6.1
 	github.com/tidwall/gjson v1.14.4
-	golang.org/x/text v0.7.0
+	golang.org/x/text v0.13.0
 )
 
 require (
@@ -25,10 +25,10 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect
-	golang.org/x/crypto v0.5.0 // indirect
+	golang.org/x/crypto v0.14.0 // indirect
 	golang.org/x/exp v0.0.0-20230206171751-46f607a40771 // indirect
-	golang.org/x/mod v0.7.0 // indirect
-	golang.org/x/net v0.7.0 // indirect
-	golang.org/x/sys v0.5.0 // indirect
-	golang.org/x/tools v0.5.0 // indirect
+	golang.org/x/mod v0.8.0 // indirect
+	golang.org/x/net v0.17.0 // indirect
+	golang.org/x/sys v0.13.0 // indirect
+	golang.org/x/tools v0.6.0 // indirect
 )
